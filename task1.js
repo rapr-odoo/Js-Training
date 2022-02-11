@@ -1,4 +1,4 @@
-/*var flag = 0
+var flag = 0
 const OnClickEvent = () => document.getElementById('h3text').dispatchEvent(new Event(EVENT_TYPE));
 const OnOver = () => {
   flag = 0;
@@ -11,11 +11,14 @@ const OnOut = () => {
     if (flag) document.getElementById('demo').innerHTML = "";
   },3000);
 }
-const loadJson = () => new Promise((resolve, reject) => {
-  const a = $("<a>").attr("href", "http://i.stack.imgur.com/L8rHf.png").attr("download", "img.png").appendTo("body");
-  a[0].click();
-  a.remove();
-});
+
+// Incomplete Functionality
+// const loadJson = () => new Promise((resolve, reject) => {
+//   const a = $("<a>").attr("href", "http://i.stack.imgur.com/L8rHf.png").attr("download", "img.png").appendTo("body");
+//   a[0].click();
+//   a.remove();
+// });
+
 
 const loadPromise = () => {
   return new Promise((resolve) => {document.onreadystatechange = () => {
@@ -29,10 +32,11 @@ const cusOver = (ev) => ev.target.style = "color: red;";
 const EVENT_TYPE = "rahul";
 
 
-
-// h1 = document.getElementById('h1text')
-// h1.addEventListener('mouseover', cusOver)
-// h1.addEventListener('mouseout', cusOut)
+// Can only be used after the DOM has been laoded
+// So need to call the script file at the end of the codee
+// h1 = document.getElementById('h1text');
+// h1.addEventListener('mouseover', cusOver);
+// h1.addEventListener('mouseout', cusOut);
 
 (async function() {
   const res = await loadPromise();
@@ -48,9 +52,20 @@ const EVENT_TYPE = "rahul";
   h2.addEventListener('click', () => alert('You clicked Custom H2 Buton!!!'));
   h2.dispatchEvent(cusOverEvent);
   document.getElementById('h3text').addEventListener(EVENT_TYPE, (event) => event.target.innerHTML = "Called");
-  loadJson.then((val) => {console.log(val);}, (error) => {console.log(error)});
+
+
+  // Adding Some Map, Sort, Filter Functionalities
+  // Get the Math Table Elemets
+  const tableRows = document.getElementById('mathTable').children[1].children;
+  // const tableRows = [5,4,3,2];
+  Array.from(tableRows).forEach((tr, index, arr) => {
+    const rand = Math.ceil(Math.random() * 100);
+    arr[index].children[0].innerHTML = rand;
+    arr[index].children[1].innerHTML = Math.sqrt(rand).toFixed(3);
+  })
+
 })();
-*/
+
 
 const wait = (time) => new Promise(
   function (resolve, reject) {
