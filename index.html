@@ -23,7 +23,10 @@
     <h2 id="h3text">H3 Text</h2>
   </div>
   <div>
-    <span><<button type="submit" id="json_load" onclick="loadJson.then(resolve, reject) {}">Load Json</button></span>
+    <span><button type="submit" id="sort_asc" onclick="arrange()">Ascending</button></span>
+    <span><button type="submit" id="sort_dec" onclick="arrange(false)">Descending</button></span>
+    <span> <input type="text" name="Search" id="search_query" placeholder="Number > 30" /> </span>
+    <span><button type="submit" id="filter" onclick="search()" >Search</button></span>
   </div>
   <div>
     <table id="mathTable">
@@ -32,10 +35,6 @@
         <th>Root</th>
       </thead>
       <tbody>
-        <tr><td></td><td></td></tr>
-        <tr><td></td><td></td></tr>
-        <tr><td></td><td></td></tr>
-        <tr><td></td><td></td></tr>
         <tr><td></td><td></td></tr>
       </tbody>
     </table>

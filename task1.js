@@ -1,4 +1,5 @@
 var flag = 0
+var rows_array = null;
 const OnClickEvent = () => document.getElementById('h3text').dispatchEvent(new Event(EVENT_TYPE));
 const OnOver = () => {
   flag = 0;
@@ -38,6 +39,103 @@ const EVENT_TYPE = "rahul";
 // h1.addEventListener('mouseover', cusOver);
 // h1.addEventListener('mouseout', cusOut);
 
+function changeDOM() {
+  return
+}
+
+function arrange(asc = true) {
+  const tableRows = document.getElementById('mathTable').children[1].children;
+  const arr = Array.from(document.getElementById('mathTable').cloneNode(true).children[1].children);
+  if (asc) arr.sort((a,b) => a.children[0].innerHTML-b.children[0].innerHTML);
+  else arr.sort((a,b) => b.children[0].innerHTML-a.children[0].innerHTML);
+  for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
+}
+
+function search_extended(tableRows, arr, ) {
+
+}
+
+function search() {
+  const raw_search_query = document.getElementById('search_query').cloneNode(true).value;
+  const search_query = [];
+  const tableRows = document.getElementById('mathTable').children[1].children;
+  var arr = Array.from(document.getElementById('mathTable').cloneNode(true).children[1].children);
+  const search_params = ['=','!=','<','>','<=','>='];
+  for (val of raw_search_query.split(' ')) search_query.push(val.trim());
+  var flag = false;
+  if(!isNan(search_query[2]) && search_query[0].toLowerCase() == 'num' || search_query[0].toLowerCase() == 'number') {
+    switch (search_query[1]) {
+      case '=': arr = arr.filter((tr) => tr.children[0].innerHTML == search_query[2])
+                for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
+                break;
+
+      case '!=': arr = arr.filter((tr) => tr.children[0].innerHTML != search_query[2])
+                 for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
+                break;
+
+      case '<=': arr = arr.filter((tr) => tr.children[0].innerHTML <= search_query[2])
+                for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
+                break;
+
+      case '>=': arr = arr.filter((tr) => tr.children[0].innerHTML >= search_query[2])
+                for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
+                break;
+
+      case '<':
+        break;
+
+      case '>':
+        break;
+
+      default:flag = true;
+        break;
+    }
+  }else if(!isNan(search_query[2]) && search_query[0].toLowerCase() == 'root') {
+    switch (search_query[1]) {
+      case '=':
+        break;
+
+      case '!=':
+        break;
+
+      case '<=':
+        break;
+
+      case '>=':
+        break;
+
+      case '<':
+        break;
+
+      case '>':
+        break;
+
+      default:flag = true;
+        break;
+    }
+
+  }else {
+    alert('Please Enter Valid Query!!!');
+    flag = false;
+  }
+
+
+  if (flag) alert('Please Enter Valid Query!!!');
+}
+
+function createRows(count,tableBody) {
+  while (count--) {
+    const tr = document.createElement('tr');
+    const td1 = document.createElement('td');
+    const td2 = document.createElement('td');
+    const rand = Math.ceil(Math.random() * 100);
+    td1.append(rand.toString());
+    td2.append(Math.sqrt(rand).toFixed(3));
+    tr.append(td1,td2);
+    tableBody.append(tr, '\n');
+  }
+}
+
 (async function() {
   const res = await loadPromise();
   console.log(res, 'Done')
@@ -56,14 +154,16 @@ const EVENT_TYPE = "rahul";
 
   // Adding Some Map, Sort, Filter Functionalities
   // Get the Math Table Elemets
-  const tableRows = document.getElementById('mathTable').children[1].children;
+  const tableBody = document.getElementById('mathTable').children[1];
+  const tableRows = tableBody.children;
   // const tableRows = [5,4,3,2];
   Array.from(tableRows).forEach((tr, index, arr) => {
     const rand = Math.ceil(Math.random() * 100);
     arr[index].children[0].innerHTML = rand;
     arr[index].children[1].innerHTML = Math.sqrt(rand).toFixed(3);
   })
-
+  createRows(10, tableBody);
+  rows_array = Array.from(document.getElementById('mathTable').cloneNode(true).children[1].children)
 })();
 
 
