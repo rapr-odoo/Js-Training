@@ -6,7 +6,7 @@
   <title>ES6 Event Handlers</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
-  <script src='task1.js'></script>
+  <script type="module" src='task1.js'></script>
 </head>
 <body>
   <div>
@@ -25,8 +25,22 @@
   <div>
     <span><button type="submit" id="sort_asc" onclick="arrange()">Ascending</button></span>
     <span><button type="submit" id="sort_dec" onclick="arrange(false)">Descending</button></span>
-    <span> <input type="text" name="Search" id="search_query" placeholder="Number > 30" /> </span>
-    <span><button type="submit" id="filter" onclick="search()" >Search</button></span>
+    <label for="search">Filter Results: </label>
+    <select name="search" id="search_column" >
+      <option value="number" selected>Number</option>
+      <option value="root">Root</option>
+    </select>
+    <select name="operator" id="search_operator">
+      <option value="=">=</option>
+      <option value="!=">!=</option>
+      <option value="<"><</option>
+      <option value=">">></option>
+      <option value="<="><=</option>
+      <option value=">=">>=</option>
+    </select>
+    <span><input type="text" id="search_value" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="30" /> </span>
+    <span><button type="submit" id="filter" onclick="search();" >Search</button></span>
+    <span><button type="reset" id="reset" onclick="resetDOM()" >Reset</button></span>
   </div>
   <div>
     <table id="mathTable">
@@ -39,6 +53,12 @@
       </tbody>
     </table>
   </div>
+  <div>
+    <h3> Hello World</h3>
+  </div>
+  <label for="newUser">Create User</label>
+  <input type="text" name="nuwUser" id="newuser"/>
+  <button type="submit" id="user_button">Create</button>
   <!-- <script src='task1.js'></script> -->
 </body>
 </html>

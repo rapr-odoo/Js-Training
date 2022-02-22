@@ -1,5 +1,8 @@
+import { RemoteCall } from "../werkzeug/static/js/remoteCalls.js";
+
 var flag = 0
-var rows_array = null;
+var global_rows_array = null;
+let users = [];
 const OnClickEvent = () => document.getElementById('h3text').dispatchEvent(new Event(EVENT_TYPE));
 const OnOver = () => {
   flag = 0;
@@ -13,14 +16,6 @@ const OnOut = () => {
   },3000);
 }
 
-// Incomplete Functionality
-// const loadJson = () => new Promise((resolve, reject) => {
-//   const a = $("<a>").attr("href", "http://i.stack.imgur.com/L8rHf.png").attr("download", "img.png").appendTo("body");
-//   a[0].click();
-//   a.remove();
-// });
-
-
 const loadPromise = () => {
   return new Promise((resolve) => {document.onreadystatechange = () => {
     if (document.readyState == 'complete') {resolve('done');}
@@ -32,6 +27,50 @@ const cusOver = (ev) => ev.target.style = "color: red;";
 
 const EVENT_TYPE = "rahul";
 
+function createUser(name) {
+  this.create(name);
+}
+
+const userPrototype = {
+  isAdmin: false,
+  group: 'base',
+}
+
+class User {
+  static users_list = []
+
+  constructor(name) {
+    let arr = name.split(' ');
+    this.firstName = arr[0];
+    this.lastName = arr[1];
+    this.email = arr[0].toString() + '@odoo.com';
+    this.login = arr[0];
+    this.password = this.login;
+    this.isAdmin = false;
+    this.group = 'base';
+    this.notify();
+    this.val = 10;
+  }
+
+  notify() {
+    alert(`Success:: User "${this.login}" created with Password "${this.password}"`);
+  }
+
+  // call the method: UserOb.greet()
+  greet() {
+    console.log("Hello", this.firstName);
+  }
+
+  // call the method: UserOb.area
+  get area() {
+    return this.val * this.val;
+  }
+
+  //call the method : UserOb.hello
+  get ['hello']() {
+    return "name";
+  }
+};
 
 // Can only be used after the DOM has been laoded
 // So need to call the script file at the end of the codee
@@ -39,8 +78,24 @@ const EVENT_TYPE = "rahul";
 // h1.addEventListener('mouseover', cusOver);
 // h1.addEventListener('mouseout', cusOut);
 
-function changeDOM() {
-  return
+function resetDOM() {
+  const arr = Array.from(document.getElementById('mathTable').children[1].children);
+  arr.forEach((tr) => {tr.style.display="";})
+}
+
+function changeDOM(tableRows, arr) {
+  var i = 0;
+  for (tr of tableRows) {
+    try{
+      if (tr.rowIndex == arr[i].rowIndex) {
+        tr.style.display = '';
+        i++;
+      }
+      else tr.style.display = "none";
+    }catch (e) {
+      tr.style.display = "none";
+    }
+  }
 }
 
 function arrange(asc = true) {
@@ -51,93 +106,68 @@ function arrange(asc = true) {
   for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
 }
 
-function search_extended(tableRows, arr, ) {
-
-}
-
 function search() {
-  const raw_search_query = document.getElementById('search_query').cloneNode(true).value;
-  const search_query = [];
+  const search_col = document.getElementById('search_column').value;
+  const search_op = document.getElementById('search_operator').value;
+  let el = document.getElementById('search_value');
+  const search_value = el.cloneNode(true).value;
+  el.value = '';
+
   const tableRows = document.getElementById('mathTable').children[1].children;
   var arr = Array.from(document.getElementById('mathTable').cloneNode(true).children[1].children);
-  const search_params = ['=','!=','<','>','<=','>='];
-  for (val of raw_search_query.split(' ')) search_query.push(val.trim());
+  let col_num = 0;
   var flag = false;
-  if(!isNan(search_query[2]) && search_query[0].toLowerCase() == 'num' || search_query[0].toLowerCase() == 'number') {
-    switch (search_query[1]) {
-      case '=': arr = arr.filter((tr) => tr.children[0].innerHTML == search_query[2])
-                for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
-                break;
+  if (search_col == 'number') col_num = 0;
+  else col_num = 1;
 
-      case '!=': arr = arr.filter((tr) => tr.children[0].innerHTML != search_query[2])
-                 for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
-                break;
+  switch (search_op) {
+    case '=': arr = arr.filter((tr) => tr.children[col_num].innerHTML == search_value);
+              break;
 
-      case '<=': arr = arr.filter((tr) => tr.children[0].innerHTML <= search_query[2])
-                for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
-                break;
+    case '!=': arr = arr.filter((tr) => tr.children[col_num].innerHTML != search_value);
+              break;
 
-      case '>=': arr = arr.filter((tr) => tr.children[0].innerHTML >= search_query[2])
-                for (let i=0; i<tableRows.length; i++) tableRows[i].innerHTML = arr[i].innerHTML;
-                break;
+    case '<=': arr = arr.filter((tr) => parseInt(tr.children[col_num].innerHTML) <= parseInt(search_value));
+              break;
 
-      case '<':
-        break;
+    case '>=': arr = arr.filter((tr) => parseInt(tr.children[col_num].innerHTML) >= parseInt(search_value));
+              break;
 
-      case '>':
-        break;
+    case '<':  arr = arr.filter((tr) => parseInt(tr.children[col_num].innerHTML) < parseInt(search_value));
+      break;
 
-      default:flag = true;
-        break;
-    }
-  }else if(!isNan(search_query[2]) && search_query[0].toLowerCase() == 'root') {
-    switch (search_query[1]) {
-      case '=':
-        break;
+    case '>':  arr = arr.filter((tr) => parseInt(tr.children[col_num].innerHTML) > parseInt(search_value));
+      break;
 
-      case '!=':
-        break;
-
-      case '<=':
-        break;
-
-      case '>=':
-        break;
-
-      case '<':
-        break;
-
-      case '>':
-        break;
-
-      default:flag = true;
-        break;
-    }
-
-  }else {
-    alert('Please Enter Valid Query!!!');
-    flag = false;
+    default:flag = true;
+      break;
   }
 
 
   if (flag) alert('Please Enter Valid Query!!!');
+  else changeDOM(tableRows, arr);
 }
 
-function createRows(count,tableBody) {
-  while (count--) {
-    const tr = document.createElement('tr');
-    const td1 = document.createElement('td');
-    const td2 = document.createElement('td');
-    const rand = Math.ceil(Math.random() * 100);
-    td1.append(rand.toString());
-    td2.append(Math.sqrt(rand).toFixed(3));
-    tr.append(td1,td2);
-    tableBody.append(tr, '\n');
-  }
+function createRows(tableBody, num=null, root=null) {
+  const tr = document.createElement('tr');
+  const td1 = document.createElement('td');
+  const td2 = document.createElement('td');
+  td1.append(num)
+  td2.append(root)
+  tr.append(td1,td2);
+  tableBody.append(tr, '\n');
+
+  // let text = document.createTextNode()
+  // td1.appendChild()
+
+  // const rand = Math.ceil(Math.random() * 100);
+  // td1.append(rand.toString());
+  // td2.append(Math.sqrt(rand).toFixed(3));
 }
 
 (async function() {
   const res = await loadPromise();
+
   console.log(res, 'Done')
   var h1 = document.getElementById('h1text');
   h1.addEventListener('mouseover', cusOver)
@@ -162,8 +192,28 @@ function createRows(count,tableBody) {
     arr[index].children[0].innerHTML = rand;
     arr[index].children[1].innerHTML = Math.sqrt(rand).toFixed(3);
   })
-  createRows(10, tableBody);
-  rows_array = Array.from(document.getElementById('mathTable').cloneNode(true).children[1].children)
+  let count = 9;
+  while(count--) {
+    const rand = Math.ceil(Math.random() * 100);
+    createRows(tableBody, rand, Math.sqrt(rand).toFixed(3));
+  }
+  global_rows_array = Array.from(document.getElementById('mathTable').cloneNode(true).children[1].children)
+
+
+  // Changing Default constructor for createUser
+  createUser.prototype = userPrototype;
+  createUser.prototype.constructor = createUser;
+  document.getElementById('user_button').addEventListener('click', () => {
+    users.push(new createUser(document.getElementById('newuser').cloneNode(true).value));
+    document.getElementById('newuser').value = '';
+    users[0].greet();
+  })
+
+  // const user1 = new User('Rahul Prajapati')
+
+  req = new RemoteCall({type: 'json', url: 'anything'});
+  req.call;
+  debugger;
 })();
 
 
@@ -175,7 +225,7 @@ const wait = (time) => new Promise(
 
 wait(200)
   // onFulfilled() can return a new promise, `x`
-  .then((val) => new Promise((resolve, reject) => {return resolve('foo')}))
+  .then(() => new Promise((resolve, reject) => {return resolve('foo')}))
   // the next promise will assume the state of `x`
   .then(a => a)
   // Above we returned the unwrapped value of `x`
@@ -205,14 +255,3 @@ wait(200)
   .then(g => console.log(`g: ${ g }`))
   .catch(h => console.log(h)) // [Error: bar]
 ;
-
-// const abc = function () {
-//   return new Promise(function (resolve, reject) {
-//     setTimeout(() => resolve("Hi"), 2000);
-//   });
-// }
-
-// async function def () {
-//   await abc();
-
-// }
